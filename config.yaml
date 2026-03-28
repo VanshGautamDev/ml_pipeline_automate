@@ -1,0 +1,35 @@
+data:
+  source: "data/raw.csv"          # CSV, DB URL, or S3 path
+  target_column: "label"
+  test_size: 0.2
+  random_state: 42
+
+preprocessing:
+  drop_duplicates: true
+  handle_missing: "median"        # Options: median, mean, mode, drop
+  scale_features: true
+  encode_categoricals: true
+
+training:
+  models: "all"                   # "all"  OR a list: [random_forest, svm, knn]
+  hyperparameter_tuning: true     # GridSearchCV per model
+  cv_folds: 5                     # Stratified K-Fold
+  scoring: "accuracy"             # Metric used during CV
+
+  # ── Diagnostic thresholds (edit to adjust sensitivity) ──
+  overfit_threshold: 0.08         # train-cv gap above this → flagged as overfitting
+  underfit_threshold: 0.60        # cv score below this    → flagged as underfitting
+  variance_threshold: 0.05        # cv std above this      → flagged as high variance
+
+  model_output_path: "models/model.pkl"
+
+evaluation:
+  metrics: ["accuracy", "precision", "recall", "f1", "roc_auc"]
+  save_report: true
+  report_path: "reports/evaluation.json"
+  plot_confusion_matrix: true
+
+deployment:
+  min_accuracy: 0.80
+  model_output_path: "models/model.pkl"
+  save_metadata: true
